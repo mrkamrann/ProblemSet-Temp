@@ -28,6 +28,7 @@ An integer denoting target
 
 Input Constraints:
 
+The value of len should be between 1 to 100 both inclusive
 The length of edges should be at least 1 and at most len * (len - 1) / 2 inclusive.
 Each edges[i] should have exactly 3 elements.
 Each a_i and b_i should be in the range [0, len-1] inclusive.
@@ -38,3 +39,165 @@ The value of target should be in the range [1, 10^9] inclusive.
 The graph is connected, and there are no self-loops or repeated edges.
 
 */
+
+#include <vector>
+#include <queue>
+#include <stdexcept>
+#include <algorithm>
+#include <iostream>
+#include <unordered_set>
+#include <unordered_map>
+#include <cassert>
+
+  
+  void FinalizeEdges(int modifications, std::vector<std::vector<int>>& edges) {
+        for (size_t i = 0; i < edges.size(); ++i) {
+            if (edges[i][2] < 0) {
+                if (modifications > 0) {
+                    --modifications;
+                    edges[i][2] = 1;
+                } else {
+                    edges[i][2] = 1234567890;
+                }
+            }
+        }
+    }
+
+    std::vector<int> ShortestPathFromSource(int len, int source, const std::vector<std::vector<std::pair<int, int>>>& connections) {
+        std::vector<int> distances(len, -1);
+        std::vector<bool> visited(len);
+        distances[source] = 0;
+
+        std::priority_queue<std::pair<int, int>> priority_queue;
+        priority_queue.push(std::make_pair(0, source));
+
+        while (!priority_queue.empty()) {
+            int current_node = priority_queue.top().second;
+            priority_queue.pop();
+            if (visited[current_node]) {
+                continue;
+            }
+            visited[current_node] = true;
+            for (const std::pair<int, int>& neighbor : connections[current_node]) {
+                int next_node = neighbor.first, weight = neighbor.second;
+                if (visited[next_node] || (distances[next_node] >= 0 && distances[next_node] <= distances[current_node] + weight)) {
+                    continue;
+                }
+                distances[next_node] = distances[current_node] + weight;
+                priority_queue.push(std::make_pair(-distances[next_node], next_node));
+            }
+        }
+        return distances;
+    }
+  
+  
+    std::vector<std::vector<int>> modifiedGraphEdges(int len, std::vector<std::vector<int>>& edges, int source, int destination, int target) {
+        if (len < 1 || len > 100) {
+            throw std::invalid_argument("Invalid len, must be between 2 and 50 inclusive");
+        }
+        if (edges.size() < 1 || edges.size() > (len * (len - 1) / 2)) {
+            throw std::invalid_argument("Invalid number of edges, must be between 1 and len*(len-1)/2 inclusive");
+        }
+        if (source < 0 || source >= len || destination < 0 || destination >= len || source == destination) {
+            throw std::invalid_argument("Invalid source or destination");
+        }
+        if (target < 1 || target > 1000000000) {
+            throw std::invalid_argument("Invalid target, must be between 1 and 1,000,000,000 inclusive");
+        }
+
+        std::unordered_set<int> unique_vertices;
+        std::unordered_set<std::string> unique_edges;
+
+        for (size_t i = 0; i < edges.size(); ++i) {
+            if (edges[i].size() != 3) {
+                throw std::invalid_argument("Each edge must have exactly 3 elements");
+            }
+            int val_u = edges[i][0];
+            int val_v = edges[i][1];
+            int val_w = edges[i][2];
+
+            if (val_u < 0 || val_u >= len || val_v < 0 || val_v >= len) {
+                throw std::invalid_argument("Invalid edge endpoints, must be between 0 and len-1 inclusive");
+            }
+            if (val_u == val_v) {
+                throw std::invalid_argument("Self-loops are not allowed");
+            }
+            if (val_w != -1 && (val_w < 1 || val_w > 10000000)) {
+                throw std::invalid_argument("Invalid edge weight, must be -1 or between 1 and 10,000,000 inclusive");
+            }
+
+            std::string edge_key = std::to_string(std::min(val_u, val_v)) + "-" + std::to_string(std::max(val_u, val_v));
+            if (unique_edges.count(edge_key) > 0) {
+                throw std::invalid_argument("Repeated edges are not allowed");
+            }
+
+            unique_edges.insert(edge_key);
+            unique_vertices.insert(val_u);
+            unique_vertices.insert(val_v);
+        }
+
+        if (unique_vertices.size() < static_cast<size_t>(len)) {
+            throw std::invalid_argument("The graph is not connected");
+        }
+
+        std::vector<int> indices;
+        for (size_t i = 0; i < edges.size(); ++i) {
+            if (edges[i][2] < 0) {
+                indices.push_back(i);
+            }
+        }
+
+        int left = 0, right = static_cast<int>(indices.size());
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            std::vector<std::vector<std::pair<int, int>>> connections(len);
+            int remaining_modifications = mid;
+
+            for (size_t i = 0; i < edges.size(); ++i) {
+                int weight = edges[i][2];
+                if (weight < 0) {
+                    if (remaining_modifications <= 0) {
+                        continue;
+                    }
+                    --remaining_modifications;
+                    weight = 1;
+                }
+                connections[edges[i][0]].emplace_back(edges[i][1], weight);
+                connections[edges[i][1]].emplace_back(edges[i][0], weight);
+            }
+
+            std::vector<int> dist_source = ShortestPathFromSource(len, source, connections);
+            if (dist_source[destination] == target) {
+                FinalizeEdges(mid, edges);
+                return edges;
+            }
+            if (dist_source[destination] >= 0 && dist_source[destination] < target) {
+                right = mid - 1;
+                continue;
+            }
+
+            std::vector<int> dist_destination = ShortestPathFromSource(len, destination, connections);
+            for (size_t t = static_cast<size_t>(mid); t < indices.size(); ++t) {
+                int index = indices[t];
+                if (dist_source[edges[index][0]] >= 0 && dist_destination[edges[index][1]] >= 0 && dist_source[edges[index][0]] + dist_destination[edges[index][1]] < target) {
+                    edges[index][2] = target - (dist_source[edges[index][0]] + dist_destination[edges[index][1]]);
+                    FinalizeEdges(mid, edges);
+                    return edges;
+                }
+                if (dist_source[edges[index][1]] >= 0 && dist_destination[edges[index][0]] >= 0 && dist_source[edges[index][1]] + dist_destination[edges[index][0]] < target) {
+                    edges[index][2] = target - (dist_source[edges[index][1]] + dist_destination[edges[index][0]]);
+                    FinalizeEdges(mid, edges);
+                    return edges;
+                }
+            }
+            left = mid + 1;
+        }
+
+        return {};
+    }
+
+
+int main(){
+return 0;
+
+}
