@@ -27,4 +27,111 @@ Each mod_i should be in the range [1, 10^5] inclusive.
 
 */
 
+#include <vector>
+#include <stdexcept>
+#include <cassert>
+
+
+      std::pair<long long, long long> SumAndCountBitsBeforeValue(long long value) {
+        long long bit_sum = 0;
+        long long bit_count = 0;
+        for (long long bit = 0, power = 1; power < value; bit++, power <<= 1) {
+            long long current = (value >> (bit + 1)) << bit;
+            current += std::max(0LL, (value % (power << 1)) - power);
+            bit_count += current;
+            bit_sum += bit * current;
+        }
+        return {bit_sum, bit_count};
+    }
+
+    long long GetValueFromIndex(long long index) {
+        index++;
+        long long low = 1, high = 1LL << 50;
+
+        while (low < high) {
+            long long mid = low + (high - low) / 2;
+            if (SumAndCountBitsBeforeValue(mid + 1).second < index) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    long long PrefixSumTillIndex(long long index) {
+        long long value = GetValueFromIndex(index);
+        std::pair<long long, long long> sum_and_count = SumAndCountBitsBeforeValue(value);
+
+        long long bit_sum = sum_and_count.first;
+        long long bit_count = sum_and_count.second;
+
+        if (bit_count < index) {
+            for (int bit = 0; bit_count < index; bit++, value >>= 1) {
+                bit_sum += bit * (value % 2);
+                bit_count += value % 2;
+            }
+        }
+        return bit_sum;
+    }
+
+    int Pow(long long base, long long exponent, int modulus) {
+        if (exponent <= 0) {
+            return 1 % modulus;
+        }
+        base %= modulus;
+        long long result = 1;
+        while (exponent) {
+            if (exponent & 1) {
+                result = Multiply(result, base, modulus);
+            }
+            base = Multiply(base, base, modulus);
+            exponent >>= 1;
+        }
+        return result;
+    }
+
+    int Multiply(long long multiplicand, long long multiplier, int modulus) {
+        return ((multiplicand % modulus) * (multiplier % modulus)) % modulus;
+    }
+  
+    std::vector<int> FindProductsOfElements(std::vector<std::vector<long long>>& queries) {
+        
+        if (queries.empty() || queries.size() > 500) {
+            throw std::invalid_argument("Queries size must be between 1 and 500 inclusive.");
+        }
+        for (const std::vector<long long>& query : queries) {
+            if (query.size() != 3) {
+                throw std::invalid_argument("Each query must contain exactly 3 elements.");
+            }
+            if (query[0] < 0 || query[0] > 1e15) {
+                throw std::invalid_argument("from_i must be in the range [0, 10^15] inclusive.");
+            }
+            if (query[1] < query[0] || query[1] > 1e15) {
+                throw std::invalid_argument("to_i must be in the range [from_i, 10^15] inclusive.");
+            }
+            if (query[2] < 1 || query[2] > 1e5) {
+                throw std::invalid_argument("mod_i must be in the range [1, 100000] inclusive.");
+            }
+        }
+
+        std::vector<int> result;
+        result.reserve(queries.size());
+
+        for (const std::vector<long long>& query : queries) {
+            long long prefix_sum_from = PrefixSumTillIndex(query[0]);
+            long long prefix_sum_to = PrefixSumTillIndex(query[1] + 1);
+
+            result.push_back(Pow(2, prefix_sum_to - prefix_sum_from, query[2]));
+        }
+
+        return result;
+    }
+
+
+
+int main() {
+ 
+    return 0;
+}
 
