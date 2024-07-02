@@ -1,3 +1,30 @@
 /*
 Link: https://leetcode.com/problems/find-products-of-elements-of-big-array/
+
+Julie has a powerful vector for an integer x, which is the shortest sorted vector of powers of two that sum up to x. For example, the powerful vector for 11 is [1, 2, 8].
+
+The vector big_nums is created by concatenating the powerful vectors for every positive integer i in ascending order: 1, 2, 3, and so forth. Thus, big_nums starts as [1, 2, 1, 2, 4, 1, 4, 2, 4, 1, 2, 4, 8, ...].
+
+Julie is given a 2D integer matrix queries, where for queries[i] = [from_i, to_i, mod_i] you should calculate (big_nums[from_i] * big_nums[from_i + 1] * ... * big_nums[to_i]) % mod_i.
+
+Return an integer vector answer such that answer[i] is the answer to the ith query.
+
+Create a C++ Function DeliverPackages that will return a vector<int> denoting answer such that answer[i] is the answer to the ith query.
+
+Use appropriate Error Handling using the stdexcept library for the invalid test cases.
+
+Input Type:
+
+A vector<vector<int>> denoting queries
+
+Input Constraints:
+
+The length of queries should be at least 1 and at most 500 inclusive.
+Each queries[i] should have exactly 3 elements.
+Each from_i should be in the range [0, 10^15] inclusive.
+Each to_i should be in the range [from_i, 10^15] inclusive.
+Each mod_i should be in the range [1, 10^5] inclusive.
+
 */
+
+
