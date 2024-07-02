@@ -1,3 +1,33 @@
 /*
 Link : https://leetcode.com/problems/find-the-sum-of-subsequence-powers/
+
+
+Julie, an enthusiastic programmer, loves solving complex problems. One day, she stumbled upon an interesting challenge involving subsequences. The problem was to find the sum of powers of all subsequences 
+of a given integer vector nums of length len and a positive integer sub_len.
+
+In Julie's world, the power of a subsequence is defined as the minimum absolute difference between any two elements in the subsequence. She needed to return the sum of powers of all subsequences of nums 
+which have a length equal to sub_len. However, since the answer could be large, it had to be returned modulo 10^9 + 7.
+
+Excited by the challenge, Julie quickly dived into coding and came up with a solution. She decided to share the problem with her friends, so they could try solving it too.
+
+Return the sum of powers of all subsequences of nums which have length equal to sub_len.
+
+Since the answer may be large, return it modulo 10^9 + 7.
+
+Create a C++ Function DeliverPackages that will return an integer denoting the sum of powers of all subsequences of nums which have length equal to sub_len.
+
+Use appropriate Error Handling using the stdexcept library for the invalid test cases.
+
+Input Type:
+
+A vector<int> denoting nums
+An integer denoting sub_len
+
+Input Constraints:
+
+The length of nums(len) should be in the range [2, 50] both inclusive.
+Each value in nums should be in the range [-10^8, 10^8] both inclusive.
+The value of sub_len should be in the range [2, len] both inclusive.
+
+
 */
