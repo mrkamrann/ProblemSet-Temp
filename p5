@@ -28,3 +28,91 @@ The string str consists only of lowercase English letters.
 
 
 */
+
+#include <vector>
+#include <string>
+#include <stdexcept>
+#include <cassert>
+
+class Solution {
+public:
+    int check[50000];
+    int dp_table[50000];
+    char vowel_list[5] = {'a', 'e', 'i', 'o', 'u'};
+    
+    long long beautifulSubstrings(std::string str, int val) {
+        if (str.length() < 1 || str.length() > 50000) {
+            throw std::invalid_argument("The length of the string must be between 1 and 50,000 inclusive.");
+        }
+        if (val < 1 || val > 1000) {
+            throw std::invalid_argument("The value of val must be between 1 and 1,000 inclusive.");
+        }
+       for(char character : str)
+       {
+         if (character < 'a' || character > 'z')
+         {
+            throw std::invalid_argument("str contains only lowercase english letters");
+         }
+       }
+        
+        long long result = 0;
+        char is_vowel[128] = {0};
+        is_vowel['a'] = 1;
+        is_vowel['e'] = 1;
+        is_vowel['i'] = 1;
+        is_vowel['o'] = 1;
+        is_vowel['u'] = 1;
+        int prime_count[1000] = {0};
+        int str_length = str.length();
+        int i, j, min_vowel_count = 1;
+
+        for (i = 2; i <= val; ++i) {
+            while (val % i == 0) {
+                ++prime_count[i];
+                val /= i;
+            }
+            prime_count[i] = (prime_count[i] / 2 + (prime_count[i] & 1));
+            for (j = 0; j < prime_count[i]; ++j) {
+                min_vowel_count *= i;
+            }
+            if (val == 1) break;
+        }
+
+        int left = 0, right = 0;
+        int min_vowel_count_x2 = min_vowel_count * 2;
+        if (str_length < min_vowel_count_x2) return 0;
+
+        int vowel_count = 0;
+        for (right = 0; right < min_vowel_count_x2; ++right) {
+            vowel_count += is_vowel[str[right]];
+        }
+        check[right - 1] = vowel_count;
+        for (; right < str_length; ++right, ++left) {
+            vowel_count = vowel_count + is_vowel[str[right]] - is_vowel[str[left]];
+            check[right] = vowel_count;
+        }
+
+        int length = 0;
+        for (i = min_vowel_count_x2 - 1; i < str_length; ++i) {
+            vowel_count = 0;
+            length = 0;
+            for (j = i; j + 1 >= min_vowel_count_x2; j -= min_vowel_count_x2) {
+                vowel_count += check[j];
+                length += min_vowel_count_x2;
+                if (vowel_count == (length >> 1)) {
+                    if (j - min_vowel_count_x2 > 0) {
+                        dp_table[i] = dp_table[j - min_vowel_count_x2] + 1;
+                    } else {
+                        dp_table[i] = 1;
+                    }
+                    break;
+                }
+            }
+            result += dp_table[i];
+        }
+        
+        return result;
+    }
+};
+
+
