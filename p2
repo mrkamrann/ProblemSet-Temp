@@ -2,11 +2,11 @@
 Link : https://leetcode.com/problems/find-the-sum-of-subsequence-powers/
 
 
-Julie, an enthusiastic programmer, loves solving complex problems. One day, she stumbled upon an interesting challenge involving subsequences. The problem was to find the sum of powers of all subsequences 
-of a given integer vector nums of length len and a positive integer sub_len.
+Julie, an enthusiastic programmer, loves solving complex problems. One day, she stumbled upon an interesting challenge involving subsequences. The problem was 
+to find the sum of powers of all subsequences of a given integer vector nums of length len and a positive integer sub_len.
 
-In Julie's world, the power of a subsequence is defined as the minimum absolute difference between any two elements in the subsequence. She needed to return the sum of powers of all subsequences of nums 
-which have a length equal to sub_len. However, since the answer could be large, it had to be returned modulo 10^9 + 7.
+In Julie's world, the power of a subsequence is defined as the minimum absolute difference between any two elements in the subsequence. She needed to return 
+the sum of powers of all subsequences of nums  which have a length equal to sub_len. However, since the answer could be large, it had to be returned modulo 10^9 + 7.
 
 Excited by the challenge, Julie quickly dived into coding and came up with a solution. She decided to share the problem with her friends, so they could try solving it too.
 
@@ -31,3 +31,116 @@ The value of sub_len should be in the range [2, len] both inclusive.
 
 
 */
+
+
+#include <vector>
+#include <stdexcept>
+#include <algorithm>
+#include <iostream>
+#include <cassert>
+
+ int Add(int first_number, int second_number, int modulus) {
+        first_number += second_number;
+        if (first_number >= modulus) {
+            first_number -= modulus;
+        }
+        return first_number;
+    }
+
+    int Multiply(int first_number, int second_number, int modulus) {
+        long long result = static_cast<long long>(first_number) * second_number;
+        if (result >= modulus) {
+            result %= modulus;
+        }
+        return static_cast<int>(result);
+    }
+
+
+    int sumOfPowers(std::vector<int>& nums, int sub_len) {
+        if (nums.size() < 2 || nums.size() > 50) {
+            throw std::invalid_argument("The length of nums should be in the range [2, 50] inclusive.");
+        }
+        for (int num : nums) {
+            if (num < -100000000 || num > 100000000) {
+                throw std::invalid_argument("Each number in nums should be between [-10^8, 10^8] inclusive.");
+            }
+        }
+        if (sub_len < 2 || sub_len > nums.size()) {
+            throw std::invalid_argument("The sub_len must be in the range [2, len] inclusive.");
+        }
+
+        const int mod = 1000000007; 
+        int length = nums.size();
+        std::sort(nums.begin(), nums.end());
+
+        int result = 0;
+        std::vector<std::vector<int>> dp_table(length, std::vector<int>(sub_len - 1, 0));
+
+        for (int i = 0; i < length; ++i) {
+            for (int j = i + 1; j < length; ++j) {
+                int difference = nums[j] - nums[i];
+                std::vector<int> positions(length, -1);
+
+            
+                for (int k = j + 1; k < length; ++k) {
+                    for (int l = j; l <= k - 1; ++l) {
+                        if (nums[k] - nums[l] >= difference) {
+                            positions[k] = l;
+                        }
+                    }
+                }
+
+          
+                for (int k = i - 1; k >= 0; --k) {
+                    for (int l = i; l >= k + 1; --l) {
+                        if (nums[l] - nums[k] > difference) {
+                            positions[k] = l;
+                        }
+                    }
+                }
+
+               
+                for (int ni = 0; ni < length; ++ni) {
+                    for (int nj = 0; nj < sub_len - 1; ++nj) {
+                        dp_table[ni][nj] = 0;
+                    }
+                }
+
+                dp_table[j][0] = 1;
+
+      
+                for (int ni = j + 1; ni < length; ++ni) {
+                    for (int nj = 0; nj <= sub_len - 2; ++nj) {
+                        dp_table[ni][nj] = Add(dp_table[ni][nj], dp_table[ni - 1][nj], mod);
+                        if (nj > 0 && positions[ni] != -1) {
+                            dp_table[ni][nj] = Add(dp_table[ni][nj], dp_table[positions[ni]][nj - 1], mod);
+                        }
+                    }
+                }
+
+                dp_table[i][0] = 1;
+
+      
+                for (int ni = i - 1; ni >= 0; --ni) {
+                    for (int nj = 0; nj <= sub_len - 2; ++nj) {
+                        dp_table[ni][nj] = Add(dp_table[ni][nj], dp_table[ni + 1][nj], mod);
+                        if (nj > 0 && positions[ni] != -1) {
+                            dp_table[ni][nj] = Add(dp_table[ni][nj], dp_table[positions[ni]][nj - 1], mod);
+                        }
+                    }
+                }
+
+                int count = 0;
+                for (int k = 0; k <= sub_len - 2; ++k) {
+                    count = Add(count, Multiply(dp_table[0][k], dp_table[length - 1][sub_len - 2 - k], mod), mod);
+                }
+
+                result = Add(result, Multiply(difference, count, mod), mod);
+            }
+        }
+        return result;
+    }
+
+int main(){
+  return 0;
+}
