@@ -1,3 +1,39 @@
 /*
 Link: https://leetcode.com/problems/modify-graph-edge-weights/
+
+Julie is given an undirected weighted connected graph containing len nodes labeled from 0 to len - 1, and an integer vector edges where edges[i] = [a_i, b_i, w_i] indicates that there is an edge between 
+nodes a_i and b_i with weight w_i.
+
+Some edges have a weight of -1 (w_i = -1), while others have a positive weight (w_i > 0).
+
+Julie's task is to modify all edges with a weight of -1 by assigning them positive integer values in the range [1, 2 * 10^9] so that the shortest distance between the nodes source and destination 
+becomes equal to an integer target. If there are multiple modifications that make the shortest distance between source and destination equal to target, any of them will be considered correct.
+
+Return a vector containing all edges (even unmodified ones) in any order if it is possible to make the shortest distance from source to destination equal to target, or an empty vector if it's impossible.
+
+Note: Julie is not allowed to modify the weights of edges with initial positive weights.
+
+Create a C++ Function DeliverPackages that will return an integer denoting the minimum number of trips required.
+
+Use appropriate Error Handling using the stdexcept library for the invalid test cases.
+
+Input Type:
+
+An integer denoting len
+A vector<vector<int>> denoting edges
+An integer denoting source
+An integer denoting destination
+An integer denoting target
+
+Input Constraints:
+
+The length of edges should be at least 1 and at most len * (len - 1) / 2 inclusive.
+Each edges[i] should have exactly 3 elements.
+Each a_i and b_i should be in the range [0, len-1] inclusive.
+Each w_i should be -1 or in the range [1, 10^7] inclusive.
+Each source and destination should be in the range [0, len-1] inclusive.
+source should not be equal to destination.
+The value of target should be in the range [1, 10^9] inclusive.
+The graph is connected, and there are no self-loops or repeated edges.
+
 */
