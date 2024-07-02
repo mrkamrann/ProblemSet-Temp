@@ -13,7 +13,8 @@ Return a vector containing all edges (even unmodified ones) in any order if it i
 
 Note: Julie is not allowed to modify the weights of edges with initial positive weights.
 
-Create a C++ Function DeliverPackages that will return an integer denoting the minimum number of trips required.
+Create a C++ Function DeliverPackages that will return a vector<int> containing all edges (even unmodified ones) in any order if it is possible to make the shortest distance from source 
+to destination equal to target, or an empty vector if it's impossible.
 
 Use appropriate Error Handling using the stdexcept library for the invalid test cases.
 
