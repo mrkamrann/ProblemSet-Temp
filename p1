@@ -9,7 +9,7 @@ Julie is given a 2D integer matrix queries, where for queries[i] = [from_i, to_i
 
 Return an integer vector answer such that answer[i] is the answer to the ith query.
 
-Create a C++ Function DeliverPackages that will return a vector<int> denoting answer such that answer[i] is the answer to the ith query.
+Create a C++ Function FindProductsOfElements that will return a vector<int> denoting answer such that answer[i] is the answer to the ith query.
 
 Use appropriate Error Handling using the stdexcept library for the invalid test cases.
 
@@ -75,6 +75,11 @@ Each mod_i should be in the range [1, 10^5] inclusive.
         return bit_sum;
     }
 
+
+    int Multiply(long long multiplicand, long long multiplier, int modulus) {
+        return ((multiplicand % modulus) * (multiplier % modulus)) % modulus;
+    }
+
     int Pow(long long base, long long exponent, int modulus) {
         if (exponent <= 0) {
             return 1 % modulus;
@@ -91,9 +96,7 @@ Each mod_i should be in the range [1, 10^5] inclusive.
         return result;
     }
 
-    int Multiply(long long multiplicand, long long multiplier, int modulus) {
-        return ((multiplicand % modulus) * (multiplier % modulus)) % modulus;
-    }
+    
   
     std::vector<int> FindProductsOfElements(std::vector<std::vector<long long>>& queries) {
         
@@ -132,6 +135,147 @@ Each mod_i should be in the range [1, 10^5] inclusive.
 
 int main() {
  
+   // TEST
+std::vector<std::vector<long long>> queries_1 = {{0, 10, 2}};
+std::vector<int> expected_1 = {0};
+std::vector<int> result_1 = FindProductsOfElements(queries_1);
+assert(result_1 == expected_1);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_2 = {{1, 100, 3}};
+std::vector<int> expected_2 = {2};
+std::vector<int> result_2 = FindProductsOfElements(queries_2);
+assert(result_2 == expected_2);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_3 = {{2, 20, 4}, {5, 50, 6}};
+std::vector<int> expected_3 = {0, 4};
+std::vector<int> result_3 = FindProductsOfElements(queries_3);
+assert(result_3 == expected_3);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_4 = {{10, 1000, 10}};
+std::vector<int> expected_4 = {2};
+std::vector<int> result_4 = FindProductsOfElements(queries_4);
+assert(result_4 == expected_4);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_5 = {{0, 500, 5}, {1, 1000, 10}, {2, 1500, 15}};
+std::vector<int> expected_5 = {4,4,1};
+std::vector<int> result_5 = FindProductsOfElements(queries_5);
+assert(result_5 == expected_5);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_6 = {{100, 10000, 100}};
+std::vector<int> expected_6 = {72};
+std::vector<int> result_6 = FindProductsOfElements(queries_6);
+assert(result_6 == expected_6);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_7 = {{0, 10, 2}, {1, 100, 3}, {1,99,333}};
+std::vector<int> expected_7 = {0, 2, 229};
+std::vector<int> result_7 = FindProductsOfElements(queries_7);
+assert(result_7 == expected_7);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_8 = {{1, 10, 1}, {2, 20, 2}, {3, 30, 3}};
+std::vector<int> expected_8 = {0,0,1};
+std::vector<int> result_8 = FindProductsOfElements(queries_8);
+assert(result_8 == expected_8);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_9 = {{0, 0, 1}};
+std::vector<int> expected_9 = {0};
+std::vector<int> result_9 = FindProductsOfElements(queries_9);
+assert(result_9 == expected_9);
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_10 = {{-1, 10, 2}};
+try {
+    FindProductsOfElements(queries_10);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_11 = {{10, 5, 2}};
+try {
+    FindProductsOfElements(queries_11);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_12 = {{0, 10, 0}};
+try {
+    FindProductsOfElements(queries_12);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_13(501, {0, 10, 2});
+try {
+    FindProductsOfElements(queries_13);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_14 = {{10000000000000001, 10, 2}};
+try {
+    FindProductsOfElements(queries_14);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_15 = {{0, 10000000000000001, 2}};
+try {
+    FindProductsOfElements(queries_15);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_16 = {{0, 10, -2}};
+try {
+    FindProductsOfElements(queries_16);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<std::vector<long long>> queries_17 = {{-1, -10, -2}};
+try {
+    FindProductsOfElements(queries_17);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
     return 0;
 }
-
