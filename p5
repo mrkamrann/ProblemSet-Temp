@@ -11,7 +11,8 @@ The number of vowels in the string is equal to the number of consonants.
 The product of the number of vowels and the number of consonants is divisible by val.
 Julie wants to determine the number of non-empty beautiful substrings within the string str. A substring is defined as any contiguous sequence of characters within a string.
 
-Create a C++ function __ that will return an integer representing the number of non-empty beautiful substrings in the given string str.
+Create a C++ class Solution that will contain a function BeautifulSubstrings that will return an integer representing the number of non-empty beautiful 
+substrings in the given string str.
 
 Ensure to use appropriate error handling using the stdexcept library for invalid test cases.
 
@@ -40,7 +41,7 @@ public:
     int dp_table[50000];
     char vowel_list[5] = {'a', 'e', 'i', 'o', 'u'};
     
-    long long beautifulSubstrings(std::string str, int val) {
+    long long BeautifulSubstrings(std::string str, int val) {
         if (str.length() < 1 || str.length() > 50000) {
             throw std::invalid_argument("The length of the string must be between 1 and 50,000 inclusive.");
         }
@@ -65,6 +66,9 @@ public:
         int prime_count[1000] = {0};
         int str_length = str.length();
         int i, j, min_vowel_count = 1;
+      
+        memset(dp_table, 0, sizeof(dp_table));
+        memset(check, 0, sizeof(check));
 
         for (i = 2; i <= val; ++i) {
             while (val % i == 0) {
@@ -116,3 +120,125 @@ public:
 };
 
 
+int main(){
+  Solution solution;
+  
+  // TEST
+std::string str_1 = "abcdef";
+int val_1 = 1;
+long long expected_1 = 3; 
+long long result_1 = solution.BeautifulSubstrings(str_1, val_1);
+assert(result_1 == expected_1);
+// TEST_END
+
+// TEST
+std::string str_2 = "aaa";
+int val_2 = 2;
+long long expected_2 = 0;
+long long result_2 = solution.BeautifulSubstrings(str_2, val_2);
+assert(result_2 == expected_2);
+// TEST_END
+
+// TEST
+std::string str_3 = "xyza";
+int val_3 = 1;
+long long expected_3 = 1; 
+long long result_3 = solution.BeautifulSubstrings(str_3, val_3);
+assert(result_3 == expected_3);
+// TEST_END
+
+// TEST
+std::string str_4 = "abcde";
+int val_4 = 3;
+long long expected_4 = 0; 
+long long result_4 = solution.BeautifulSubstrings(str_4, val_4);
+assert(result_4 == expected_4);
+// TEST_END
+
+// TEST
+std::string str_5 = "aaaaa";
+int val_5 = 1;
+long long expected_5 = 0; 
+long long result_5 = solution.BeautifulSubstrings(str_5, val_5);
+assert(result_5 == expected_5);
+// TEST_END
+
+// TEST
+std::string str_6 = "abcabcabc";
+int val_6 = 2;
+long long expected_6 = 2; 
+long long result_6 = solution.BeautifulSubstrings(str_6, val_6);
+assert(result_6 == expected_6);
+// TEST_END
+
+// TEST
+std::string str_7 = "uuxyzuuxyzuuxyzuuxyzuuxyz";
+int val_7 = 3;
+long long expected_7 = 11; 
+long long result_7 = solution.BeautifulSubstrings(str_7, val_7);
+assert(result_7 == expected_7);
+// TEST_END
+
+// TEST
+std::string str_8 = "abba";
+int val_8 = 2;
+long long expected_8 = 1;
+long long result_8 = solution.BeautifulSubstrings(str_8, val_8);
+assert(result_8 == expected_8);
+// TEST_END
+
+// TEST
+std::string str_9 = "aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkl";
+int val_9 = 1;
+long long expected_9 = 26; 
+long long result_9 = solution.BeautifulSubstrings(str_9, val_9);
+assert(result_9 == expected_9);
+// TEST_END
+
+// TEST
+std::string str_10 = "";
+int val_10 = 1;
+try {
+    solution.BeautifulSubstrings(str_10, val_10);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string str_11 = "abc";
+int val_11 = -26568;
+try {
+    solution.BeautifulSubstrings(str_11, val_11);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string str_12 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+int val_12 = 1001;
+try {
+    solution.BeautifulSubstrings(str_12, val_12);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+  // TEST
+std::string str_13(1e5, 'a');
+int val_13 = 26;
+try {
+    solution.BeautifulSubstrings(str_13, val_13);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+  
+  return 0;
+  
+}
