@@ -1,203 +1,335 @@
 /*
-Link: https://leetcode.com/problems/modify-graph-edge-weights/
+Link: https://leetcode.com/problems/abbreviating-the-product-of-a-range/
 
-Julie is given an undirected weighted connected graph containing len nodes labeled from 0 to len - 1, and an integer vector edges where edges[i] = [a_i, b_i, w_i] indicates that there is an edge between 
-nodes a_i and b_i with weight w_i.
+Julie is given a string word and an integer counter.
 
-Some edges have a weight of -1 (w_i = -1), while others have a positive weight (w_i > 0).
+A substring sub_str of word is considered "complete" if it meets the following criteria:
 
-Julie's task is to modify all edges with a weight of -1 by assigning them positive integer values in the range [1, 2 * 10^9] so that the shortest distance between the nodes source and destination 
-becomes equal to an integer target. If there are multiple modifications that make the shortest distance between source and destination equal to target, any of them will be considered correct.
+Each character in sub_str appears exactly counter times.
+The difference between the positions of any two adjacent characters in sub_str is at most 2 in the alphabet. This means, for any two adjacent characters 
+ch1 and ch2 in sub_str, the absolute difference in their positions in the alphabet is no more than 2.
 
-Return a vector containing all edges (even unmodified ones) in any order if it is possible to make the shortest distance from source to destination equal to target, or an empty vector if it's impossible.
+Julie needs to find the number of "complete" substrings of word.
 
-Note: Julie is not allowed to modify the weights of edges with initial positive weights.
-
-Create a C++ Function DeliverPackages that will return a vector<int> containing all edges (even unmodified ones) in any order if it is possible to make the shortest distance from source 
-to destination equal to target, or an empty vector if it's impossible.
+Create a C++ Function CountCompleteSubstrings that will return an integer denoting the number of "complete" substrings of word.
 
 Use appropriate Error Handling using the stdexcept library for the invalid test cases.
 
 Input Type:
 
-An integer denoting len
-A vector<vector<int>> denoting edges
-An integer denoting source
-An integer denoting destination
-An integer denoting target
+A string word
+An integer counter
 
 Input Constraints:
 
-The value of len should be between 1 to 100 both inclusive
-The length of edges should be at least 1 and at most len * (len - 1) / 2 inclusive.
-Each edges[i] should have exactly 3 elements.
-Each a_i and b_i should be in the range [0, len-1] inclusive.
-Each w_i should be -1 or in the range [1, 10^7] inclusive.
-Each source and destination should be in the range [0, len-1] inclusive.
-source should not be equal to destination.
-The value of target should be in the range [1, 10^9] inclusive.
-The graph is connected, and there are no self-loops or repeated edges.
+The length of word should be at least 1 and at most 10^5 inclusive.
+word consists only of lowercase English letters.
+counter should be at least 1 and at most the length of word.
 
 */
 
 #include <vector>
-#include <queue>
-#include <stdexcept>
-#include <algorithm>
-#include <iostream>
-#include <unordered_set>
 #include <unordered_map>
+#include <stdexcept>
 #include <cassert>
+#include <cmath>
 
-  
-  void FinalizeEdges(int modifications, std::vector<std::vector<int>>& edges) {
-        for (size_t i = 0; i < edges.size(); ++i) {
-            if (edges[i][2] < 0) {
-                if (modifications > 0) {
-                    --modifications;
-                    edges[i][2] = 1;
-                } else {
-                    edges[i][2] = 1234567890;
-                }
+    void BuildTree(std::vector<int>& segment_tree, const std::vector<int>& data_array, int index, int start, int end) {
+        if (start > end) return;
+        if (start == end) {
+            segment_tree[index] = data_array[start];
+            return;
+        }
+        int mid = (start + end) / 2;
+        BuildTree(segment_tree, data_array, 2 * index, start, mid);
+        BuildTree(segment_tree, data_array, 2 * index + 1, mid + 1, end);
+        segment_tree[index] = std::max(segment_tree[2 * index], segment_tree[2 * index + 1]);
+    }
+
+    int Query(const std::vector<int>& segment_tree, int index, int start, int end, int query_start, int query_end) {
+        if (query_start > end || start > query_end) return -1;
+        if (start >= query_start && end <= query_end) return segment_tree[index];
+        int mid = (start + end) / 2;
+        int left_ans = Query(segment_tree, 2 * index, start, mid, query_start, query_end);
+        int right_ans = Query(segment_tree, 2 * index + 1, mid + 1, end, query_start, query_end);
+        return std::max(left_ans, right_ans);
+    }
+
+    void UpdateNode(std::vector<int>& segment_tree, int index, int start, int end, int pos, int val) {
+        if (pos < start || pos > end) return;
+        if (start == end) {
+            segment_tree[index] = val;
+            return;
+        }
+        int mid = (start + end) / 2;
+        UpdateNode(segment_tree, 2 * index, start, mid, pos, val);
+        UpdateNode(segment_tree, 2 * index + 1, mid + 1, end, pos, val);
+        segment_tree[index] = std::max(segment_tree[2 * index], segment_tree[2 * index + 1]);
+    }
+
+    void UpdateRange(std::vector<int>& segment_tree, int index, int start, int end, int range_start, int range_end, int increment) {
+        if (start > range_end || end < range_start) return;
+        if (start == end) {
+            segment_tree[index] += increment;
+            return;
+        }
+        int mid = (start + end) / 2;
+        UpdateRange(segment_tree, 2 * index, start, mid, range_start, range_end, increment);
+        UpdateRange(segment_tree, 2 * index + 1, mid + 1, end, range_start, range_end, increment);
+        segment_tree[index] = std::max(segment_tree[2 * index], segment_tree[2 * index + 1]);
+    }
+
+    bool IsValid(const std::vector<int>& segment_tree, int left_index, int right_index, int counter, const std::unordered_map<char, int>& frequency_map, int segment_tree_size) {
+        int max_diff = Query(segment_tree, 1, 0, segment_tree_size - 1, left_index, right_index);
+        if (max_diff > 2) return false;
+        for (const auto& entry : frequency_map) {
+            if (entry.second != counter) return false;
+        }
+        return true;
+    }
+
+    void Solve(int segment_length, const std::vector<int>& diff_array, const std::vector<int>& segment_tree, int counter, const std::string& word, int& complete_substrings_count, int segment_tree_size) {
+        int substring_length = segment_length * counter;
+        if (substring_length > static_cast<int>(word.length())) return;
+        
+        std::unordered_map<char, int> char_frequency;
+        for (int i = 0; i < substring_length; ++i) {
+            char_frequency[word[i]]++;
+        }
+        if (IsValid(segment_tree, 0, substring_length - 2, counter, char_frequency, segment_tree_size)) {
+            complete_substrings_count++;
+        }
+        for (int i = 1; i <= static_cast<int>(word.length()) - substring_length; ++i) {
+            char_frequency[word[i - 1]]--;
+            if (char_frequency[word[i - 1]] == 0) {
+                char_frequency.erase(word[i - 1]);
+            }
+            char_frequency[word[i + substring_length - 1]]++;
+            if (IsValid(segment_tree, i, i + substring_length - 2, counter, char_frequency, segment_tree_size)) {
+                complete_substrings_count++;
             }
         }
     }
 
-    std::vector<int> ShortestPathFromSource(int len, int source, const std::vector<std::vector<std::pair<int, int>>>& connections) {
-        std::vector<int> distances(len, -1);
-        std::vector<bool> visited(len);
-        distances[source] = 0;
-
-        std::priority_queue<std::pair<int, int>> priority_queue;
-        priority_queue.push(std::make_pair(0, source));
-
-        while (!priority_queue.empty()) {
-            int current_node = priority_queue.top().second;
-            priority_queue.pop();
-            if (visited[current_node]) {
-                continue;
-            }
-            visited[current_node] = true;
-            for (const std::pair<int, int>& neighbor : connections[current_node]) {
-                int next_node = neighbor.first, weight = neighbor.second;
-                if (visited[next_node] || (distances[next_node] >= 0 && distances[next_node] <= distances[current_node] + weight)) {
-                    continue;
-                }
-                distances[next_node] = distances[current_node] + weight;
-                priority_queue.push(std::make_pair(-distances[next_node], next_node));
-            }
+    int CountCompleteSubstrings(const std::string& word, int counter) {
+        if (word.length() < 1 || word.length() > 100000) {
+            throw std::invalid_argument("word length out of bounds");
         }
-        return distances;
+        if (counter < 1 || counter > static_cast<int>(word.length())) {
+            throw std::invalid_argument("counter out of bounds");
+        }
+        for(int i = 0;i<word.size();++i)
+        {
+          if(word[i] < 'a' || word[i] > 'z')
+          {
+            throw std::invalid_argument("word consists only of lowercase English letters.");
+          }
+        }
+
+        int word_size = static_cast<int>(word.size());
+        std::vector<int> diff_array(word_size - 1);
+        int segment_tree_size = word_size - 1;
+
+        for (int i = 0; i < word_size - 1; ++i) {
+            diff_array[i] = std::abs(word[i] - word[i + 1]);
+        }
+
+        std::vector<int> segment_tree(4 * word_size + 1);
+        BuildTree(segment_tree, diff_array, 1, 0, word_size - 2);
+
+        int complete_substrings_count = 0;
+        for (int segment_length = 1; segment_length <= 26; ++segment_length) {
+            Solve(segment_length, diff_array, segment_tree, counter, word, complete_substrings_count, segment_tree_size);
+        }
+
+        return complete_substrings_count;
     }
-  
-  
-    std::vector<std::vector<int>> modifiedGraphEdges(int len, std::vector<std::vector<int>>& edges, int source, int destination, int target) {
-        if (len < 1 || len > 100) {
-            throw std::invalid_argument("Invalid len, must be between 2 and 50 inclusive");
-        }
-        if (edges.size() < 1 || edges.size() > (len * (len - 1) / 2)) {
-            throw std::invalid_argument("Invalid number of edges, must be between 1 and len*(len-1)/2 inclusive");
-        }
-        if (source < 0 || source >= len || destination < 0 || destination >= len || source == destination) {
-            throw std::invalid_argument("Invalid source or destination");
-        }
-        if (target < 1 || target > 1000000000) {
-            throw std::invalid_argument("Invalid target, must be between 1 and 1,000,000,000 inclusive");
-        }
-
-        std::unordered_set<int> unique_vertices;
-        std::unordered_set<std::string> unique_edges;
-
-        for (size_t i = 0; i < edges.size(); ++i) {
-            if (edges[i].size() != 3) {
-                throw std::invalid_argument("Each edge must have exactly 3 elements");
-            }
-            int val_u = edges[i][0];
-            int val_v = edges[i][1];
-            int val_w = edges[i][2];
-
-            if (val_u < 0 || val_u >= len || val_v < 0 || val_v >= len) {
-                throw std::invalid_argument("Invalid edge endpoints, must be between 0 and len-1 inclusive");
-            }
-            if (val_u == val_v) {
-                throw std::invalid_argument("Self-loops are not allowed");
-            }
-            if (val_w != -1 && (val_w < 1 || val_w > 10000000)) {
-                throw std::invalid_argument("Invalid edge weight, must be -1 or between 1 and 10,000,000 inclusive");
-            }
-
-            std::string edge_key = std::to_string(std::min(val_u, val_v)) + "-" + std::to_string(std::max(val_u, val_v));
-            if (unique_edges.count(edge_key) > 0) {
-                throw std::invalid_argument("Repeated edges are not allowed");
-            }
-
-            unique_edges.insert(edge_key);
-            unique_vertices.insert(val_u);
-            unique_vertices.insert(val_v);
-        }
-
-        if (unique_vertices.size() < static_cast<size_t>(len)) {
-            throw std::invalid_argument("The graph is not connected");
-        }
-
-        std::vector<int> indices;
-        for (size_t i = 0; i < edges.size(); ++i) {
-            if (edges[i][2] < 0) {
-                indices.push_back(i);
-            }
-        }
-
-        int left = 0, right = static_cast<int>(indices.size());
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            std::vector<std::vector<std::pair<int, int>>> connections(len);
-            int remaining_modifications = mid;
-
-            for (size_t i = 0; i < edges.size(); ++i) {
-                int weight = edges[i][2];
-                if (weight < 0) {
-                    if (remaining_modifications <= 0) {
-                        continue;
-                    }
-                    --remaining_modifications;
-                    weight = 1;
-                }
-                connections[edges[i][0]].emplace_back(edges[i][1], weight);
-                connections[edges[i][1]].emplace_back(edges[i][0], weight);
-            }
-
-            std::vector<int> dist_source = ShortestPathFromSource(len, source, connections);
-            if (dist_source[destination] == target) {
-                FinalizeEdges(mid, edges);
-                return edges;
-            }
-            if (dist_source[destination] >= 0 && dist_source[destination] < target) {
-                right = mid - 1;
-                continue;
-            }
-
-            std::vector<int> dist_destination = ShortestPathFromSource(len, destination, connections);
-            for (size_t t = static_cast<size_t>(mid); t < indices.size(); ++t) {
-                int index = indices[t];
-                if (dist_source[edges[index][0]] >= 0 && dist_destination[edges[index][1]] >= 0 && dist_source[edges[index][0]] + dist_destination[edges[index][1]] < target) {
-                    edges[index][2] = target - (dist_source[edges[index][0]] + dist_destination[edges[index][1]]);
-                    FinalizeEdges(mid, edges);
-                    return edges;
-                }
-                if (dist_source[edges[index][1]] >= 0 && dist_destination[edges[index][0]] >= 0 && dist_source[edges[index][1]] + dist_destination[edges[index][0]] < target) {
-                    edges[index][2] = target - (dist_source[edges[index][1]] + dist_destination[edges[index][0]]);
-                    FinalizeEdges(mid, edges);
-                    return edges;
-                }
-            }
-            left = mid + 1;
-        }
-
-        return {};
-    }
-
 
 int main(){
-return 0;
+  
+  
+//TEST
+std::string word_1 = "aabbcc";
+int counter_1 = 2;
+int expected_1 = 6;
+int result_1 = CountCompleteSubstrings(word_1, counter_1);
+assert(result_1 == expected_1);
+//TEST_END
 
+//TEST
+std::string word_2 = "abcabc";
+int counter_2 = 1;
+int expected_2 = 15;
+int result_2 = CountCompleteSubstrings(word_2, counter_2);
+assert(result_2 == expected_2);
+//TEST_END
+
+//TEST
+std::string word_3 = "aaabbb";
+int counter_3 = 3;
+int expected_3 = 3;
+int result_3 = CountCompleteSubstrings(word_3, counter_3);
+assert(result_3 == expected_3);
+//TEST_END
+
+//TEST
+std::string word_4 = "xyzxyz";
+int counter_4 = 1;
+int expected_4 = 15;
+int result_4 = CountCompleteSubstrings(word_4, counter_4);
+assert(result_4 == expected_4);
+//TEST_END
+
+//TEST
+std::string word_5 = "abacaba";
+int counter_5 = 1;
+int expected_5 = 15;
+int result_5 = CountCompleteSubstrings(word_5, counter_5);
+assert(result_5 == expected_5);
+//TEST_END
+
+//TEST
+std::string word_6 = "aaaaaa";
+int counter_6 = 6;
+int expected_6 = 1;
+int result_6 = CountCompleteSubstrings(word_6, counter_6);
+assert(result_6 == expected_6);
+//TEST_END
+
+//TEST
+std::string word_7 = "abcdefghijklmnopqrstuvwxy";
+int counter_7 = 1;
+int expected_7 = 325;
+int result_7 = CountCompleteSubstrings(word_7, counter_7);
+assert(result_7 == expected_7);
+//TEST_END
+
+//TEST
+std::string word_8 = "ababababa";
+int counter_8 = 3;
+int expected_8 = 4;
+int result_8 = CountCompleteSubstrings(word_8, counter_8);
+assert(result_8 == expected_8);
+//TEST_END
+
+//TEST
+std::string word_9 = "aabbccddeeffgghhii";
+int counter_9 = 2;
+int expected_9 = 45;
+int result_9 = CountCompleteSubstrings(word_9, counter_9);
+assert(result_9 == expected_9);
+//TEST_END
+
+//TEST
+std::string word_10 = "a";
+int counter_10 = 2;
+try {
+    CountCompleteSubstrings(word_10, counter_10);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
 }
+//TEST_END
+
+//TEST
+std::string word_11 = "";
+int counter_11 = 1;
+try {
+    CountCompleteSubstrings(word_11, counter_11);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_12 = "abc";
+int counter_12 = 0;
+try {
+    CountCompleteSubstrings(word_12, counter_12);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_13 = "abc";
+int counter_13 = -1;
+try {
+    CountCompleteSubstrings(word_13, counter_13);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_14 = "abc";
+int counter_14 = 4;
+try {
+    CountCompleteSubstrings(word_14, counter_14);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_15 = "abcdefghij";
+int counter_15 = 1;
+try {
+    CountCompleteSubstrings(word_15, counter_15);
+    assert(true);
+} catch(const std::invalid_argument& e) {
+    assert(false);
+}
+//TEST_END
+
+//TEST
+std::string word_16 = "abcdefghij";
+int counter_16 = 0;
+try {
+    CountCompleteSubstrings(word_16, counter_16);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_17 = "abcdefghij";
+int counter_17 = -2;
+try {
+    CountCompleteSubstrings(word_17, counter_17);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_18 = "56";
+int counter_18 = 1;
+try {
+    CountCompleteSubstrings(word_18, counter_18);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+
+//TEST
+std::string word_19 = "abcdefghijklmnopqrstuvwxyz";
+int counter_19 = 100001;
+try {
+    CountCompleteSubstrings(word_19, counter_19);
+    assert(false);
+} catch(const std::invalid_argument& e) {
+    assert(true);
+}
+//TEST_END
+  
+  return 0;
+}
+
