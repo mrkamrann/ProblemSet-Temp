@@ -14,7 +14,7 @@ Return the sum of powers of all subsequences of nums which have length equal to 
 
 Since the answer may be large, return it modulo 10^9 + 7.
 
-Create a C++ Function DeliverPackages that will return an integer denoting the sum of powers of all subsequences of nums which have length equal to sub_len.
+Create a C++ Function SumOfPowers that will return an integer denoting the sum of powers of all subsequences of nums which have length equal to sub_len.
 
 Use appropriate Error Handling using the stdexcept library for the invalid test cases.
 
@@ -56,7 +56,7 @@ The value of sub_len should be in the range [2, len] both inclusive.
     }
 
 
-    int sumOfPowers(std::vector<int>& nums, int sub_len) {
+    int SumOfPowers(std::vector<int>& nums, int sub_len) {
         if (nums.size() < 2 || nums.size() > 50) {
             throw std::invalid_argument("The length of nums should be in the range [2, 50] inclusive.");
         }
@@ -142,5 +142,165 @@ The value of sub_len should be in the range [2, len] both inclusive.
     }
 
 int main(){
+  
+  // TEST
+std::vector<int> nums_1 = {1, 2, 3, 4, 5};
+int sub_len_1 = 2;
+int expected_1 = 20;
+int result_1 = SumOfPowers(nums_1, sub_len_1);
+assert(result_1 == expected_1);
+// TEST_END
+
+// TEST
+std::vector<int> nums_2 = {-10, -20, -30, -40, -50};
+int sub_len_2 = 3;
+int expected_2 = 110;
+int result_2 = SumOfPowers(nums_2, sub_len_2);
+assert(result_2 == expected_2);
+// TEST_END
+
+// TEST
+std::vector<int> nums_3 = {10, 20, 30, 40, 50};
+int sub_len_3 = 4;
+int expected_3 = 50;
+int result_3 = SumOfPowers(nums_3, sub_len_3);
+assert(result_3 == expected_3);
+// TEST_END
+
+// TEST
+std::vector<int> nums_4 = {1, 1, 1, 1, 1};
+int sub_len_4 = 2;
+int expected_4 = 0;
+int result_4 = SumOfPowers(nums_4, sub_len_4);
+assert(result_4 == expected_4);
+// TEST_END
+
+// TEST
+std::vector<int> nums_5 = {100000000, -100000000, 100000000, -100000000, 100000000};
+int sub_len_5 = 2;
+int expected_5 = 199999993;
+int result_5 = SumOfPowers(nums_5, sub_len_5);
+assert(result_5 == expected_5);
+// TEST_END
+
+// TEST
+std::vector<int> nums_6 = {0, 0, 0, 0, 0};
+int sub_len_6 = 2;
+int expected_6 = 0;
+int result_6 = SumOfPowers(nums_6, sub_len_6);
+assert(result_6 == expected_6);
+// TEST_END
+
+// TEST
+std::vector<int> nums_7 = {-10000000, -20000000, -30000000, -40000000, -50000000};
+int sub_len_7 = 5;
+int expected_7 = 10000000;
+int result_7 = SumOfPowers(nums_7, sub_len_7);
+assert(result_7 == expected_7);
+// TEST_END
+
+// TEST
+std::vector<int> nums_8 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+int sub_len_8 = 3;
+int expected_8 = 200;
+int result_8 = SumOfPowers(nums_8, sub_len_8);
+assert(result_8 == expected_8);
+// TEST_END
+
+// TEST
+std::vector<int> nums_9 = {1, -1, 1, -1, 1, -1, 1, -1};
+int sub_len_9 = 2;
+int expected_9 = 32;
+int result_9 = SumOfPowers(nums_9, sub_len_9);
+assert(result_9 == expected_9);
+// TEST_END
+
+// TEST
+std::vector<int> nums_10 = {1, 2, 3};
+int sub_len_10 = 1;
+try {
+    SumOfPowers(nums_10, sub_len_10);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_11 = {};
+int sub_len_11 = 2;
+try {
+    SumOfPowers(nums_11, sub_len_11);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_12(51, 1);
+int sub_len_12 = 2;
+try {
+    SumOfPowers(nums_12, sub_len_12);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_13 = {1, 2, 3, 4, 5};
+int sub_len_13 = 6;
+try {
+    SumOfPowers(nums_13, sub_len_13);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_14 = {1, 2, 3, 4, 5};
+int sub_len_14 = -999;
+try {
+    SumOfPowers(nums_14, sub_len_14);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_15 = {-100000001, 1, 1, 1, 1};
+int sub_len_15 = 2;
+try {
+    SumOfPowers(nums_15, sub_len_15);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_16 = {100000001, 1, 1, 1, 1};
+int sub_len_16 = 2;
+try {
+    SumOfPowers(nums_16, sub_len_16);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::vector<int> nums_17 = {1, 2, 3, 4, 5};
+int sub_len_17 = 1e9;
+try {
+    SumOfPowers(nums_17, sub_len_17);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
   return 0;
 }
