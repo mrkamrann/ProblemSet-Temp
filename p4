@@ -20,7 +20,7 @@ Julie wants to determine the minimum cost required to convert the string source 
 
 Note: There may be cases where original[i] == original[j] and changed[i] == changed[j] for different indices i and j.
 
-Create a C++ Function named convert_string that returns an integer representing the minimum cost to transform the string source into target. 
+Create a C++ class Solution that will cotain a function named convert_string that returns an integer representing the minimum cost to transform the string source into target. 
 
 Ensure to use appropriate error handling using the stdexcept library for invalid test cases.
 
