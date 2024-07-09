@@ -1,3 +1,133 @@
 /*
 Link: https://leetcode.com/problems/count-the-number-of-powerful-integers/description/
+
+Nikhil is given three integers start_value, end_value, and digit_limit. He is also given a 0-indexed string suffix representing a positive integer.
+
+A positive integer x is called powerful if it ends with suffix (in other words, suffix is a "suffix" of x) and each digit in x is at most digit_limit.
+
+Return the total number of powerful integers in the range [start_value..end_value].
+
+A string x is a "suffix" of a string y if and only if x is a substring of y that starts from some index (including 0) in y and extends to the index y.length - 1. 
+For example, 25 is a suffix of 5125 whereas 512 is not.
+
+Create a C++ Function NumberOfPowerfulInt that will return a long long  denoting the total number of powerful integers in the range.
+
+Use appropriate Error Handling using the stdexcept library for the invalid test cases.
+
+Input Type:
+
+An integer denoting start_value
+An integer denoting end_value
+An integer denoting digit_limit
+A string denoting suffix
+
+Input Constraints:
+
+The value of start_value should be at least 1 and at most 10^15 inclusive.
+The value of end_value should be at least start_value and at most 10^15 inclusive.
+The value of digit_limit should be at least 1 and at most 9 inclusive.
+The length of num_suffix should be at least 1 and at most floor(log10(end_value)) + 1.
+The string num_suffix should only consist of numeric digits which are at most digit_limit.
+The string num_suffix should not have leading zeros.
+
 */
+
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <string>
+#include <stdexcept>
+#include <cassert>
+
+
+    std::string ConvertToString(long long number) {
+        std::string result = "";
+        while (number != 0) {
+            result = std::to_string(number % 10) + result;
+            number /= 10;
+        }
+        return result;
+    }
+
+      long long Solve(const std::string& target, int index, int digit_limit, int suffix_size, long long tight, const std::string& suffix, std::vector<std::vector<long long>>& dp_table) {
+      
+        if (index >= target.size()) {
+            return 1;
+        }
+        if (dp_table[index][tight] != -1) {
+            return dp_table[index][tight];
+        }
+        long long count = 0;
+        long long end = tight == 1 ? std::min(digit_limit, target[index] - '0') : digit_limit;
+        if (index >= target.size() - suffix_size && (suffix[index - (target.size() - suffix_size)] - '0') <= end) {
+            long long new_tight = (tight == 1 && (suffix[index - (target.size() - suffix_size)] - '0') == target[index] - '0') ? 1 : 0;
+            count += Solve(target, index + 1, digit_limit, suffix_size, new_tight, suffix, dp_table);
+        } else if (index >= target.size() - suffix_size && (suffix[index - (target.size() - suffix_size)] - '0') > end) {
+            return 0;
+        } else {
+            for (long long i = 0; i <= end; i++) {
+                long long new_tight = (tight == 1 && i == target[index] - '0') ? 1 : 0;
+                count += Solve(target, index + 1, digit_limit, suffix_size, new_tight, suffix, dp_table);
+            }
+        }
+        return dp_table[index][tight] = count;
+    }
+
+
+
+
+    long long NumberOfPowerfulInt(long long start_value, long long end_value, int digit_limit, std::string suffix) {
+        
+        if (start_value < 1 || start_value > 1000000000000000) {
+    throw std::invalid_argument("The value of start_value should be at least 1 and at most 10^15 inclusive.");
+}
+
+if (end_value < start_value || end_value > 1000000000000000) {
+    throw std::invalid_argument("The value of end_value should be at least start_value and at most 10^15 inclusive.");
+}
+
+if (digit_limit < 1 || digit_limit > 9) {
+    throw std::invalid_argument("The value of digit_limit should be at least 1 and at most 9 inclusive.");
+}
+
+if (suffix.size() < 1 || suffix.size() > static_cast<std::size_t>(std::floor(std::log10(end_value)) + 1)) {
+    throw std::invalid_argument("The length of suffix should be at least 1 and at most floor(log10(end_value)) + 1.");
+}
+
+for (char character : suffix) {
+    if (character < '0' || character > '0' + digit_limit) {
+        throw std::invalid_argument("The string suffix should only consist of numeric digits which are at most digit_limit.");
+    }
+}
+
+if (suffix.size() > 1 && suffix[0] == '0') {
+    throw std::invalid_argument("The string suffix should not have leading zeros.");
+}
+
+
+        std::vector<std::vector<long long>> dp_table(20, std::vector<long long>(2, -1));
+        std::string end_str = ConvertToString(end_value);
+        std::string start_str = ConvertToString(start_value - 1);
+        long long result = Solve(end_str, 0, digit_limit, suffix.size(), 1, suffix, dp_table);
+        std::fill(dp_table.begin(), dp_table.end(), std::vector<long long>(2, -1));
+        
+        if (start_str.size() >= suffix.size()) {
+            result -= Solve(start_str, 0, digit_limit, suffix.size(), 1, suffix, dp_table);
+        }
+
+        return result;
+    }
+
+
+
+ 
+int main(){
+  
+  return 0;
+  
+}
+
+
+
+
+
