@@ -38,6 +38,7 @@ The string num_suffix should not have leading zeros.
 #include <string>
 #include <stdexcept>
 #include <cassert>
+#include <cmath>
 
 
     std::string ConvertToString(long long number) {
@@ -118,13 +119,337 @@ if (suffix.size() > 1 && suffix[0] == '0') {
         return result;
     }
 
+#include <cassert>
 
-
- 
 int main(){
   
-  return 0;
   
+  // TEST 
+long long start_value_1 = 1;
+long long end_value_1 = 1000000;
+int digit_limit_1 = 5;
+std::string suffix_1 = "25";
+long long expected_1 = 1296;
+long long result_1 = NumberOfPowerfulInt(start_value_1, end_value_1, digit_limit_1, suffix_1);
+assert(result_1 == expected_1);
+// TEST_END
+
+// TEST 
+long long start_value_2 = 1000000;
+long long end_value_2 = 2000000;
+int digit_limit_2 = 7;
+std::string suffix_2 = "777";
+long long expected_2 = 512;
+long long result_2 = NumberOfPowerfulInt(start_value_2, end_value_2, digit_limit_2, suffix_2);
+assert(result_2 == expected_2);
+// TEST_END
+
+// TEST 
+long long start_value_3 = 12345678901234;
+long long end_value_3 = 12345678911234;
+int digit_limit_3 = 9;
+std::string suffix_3 = "567";
+long long expected_3 = 10;
+long long result_3 = NumberOfPowerfulInt(start_value_3, end_value_3, digit_limit_3, suffix_3);
+assert(result_3 == expected_3);
+// TEST_END
+
+// TEST 
+long long start_value_4 = 500000000000000;
+long long end_value_4 = 1000000000000000;
+int digit_limit_4 = 8;
+std::string suffix_4 = "10124";
+long long expected_4 = 1549681956;
+long long result_4 = NumberOfPowerfulInt(start_value_4, end_value_4, digit_limit_4, suffix_4);
+assert(result_4 == expected_4);
+// TEST_END
+
+// TEST 
+long long start_value_5 = 1;
+long long end_value_5 = 1000000000000000;
+int digit_limit_5 = 3;
+std::string suffix_5 = "123";
+long long expected_5 = 16777216;
+long long result_5 = NumberOfPowerfulInt(start_value_5, end_value_5, digit_limit_5, suffix_5);
+ assert(result_5 == expected_5);
+// TEST_END
+
+// TEST 
+long long start_value_6 = 98765432101234;
+long long end_value_6 = 98765432111234;
+int digit_limit_6 = 6;
+std::string suffix_6 = "23654321";
+long long expected_6 = 0;
+long long result_6 = NumberOfPowerfulInt(start_value_6, end_value_6, digit_limit_6, suffix_6);
+assert(result_6 == expected_6);
+// TEST_END
+
+
+// TEST 
+long long start_value_7 = 1000000000000000;
+long long end_value_7 = 1000000000000000;
+int digit_limit_7 = 1;
+std::string suffix_7 = "10";
+long long expected_7 = 0;
+long long result_7 = NumberOfPowerfulInt(start_value_7, end_value_7, digit_limit_7, suffix_7);
+assert(result_7 == expected_7);
+// TEST_END
+
+// TEST 
+long long start_value_8 = 123456789;
+long long end_value_8 = 987654321;
+int digit_limit_8 = 9;
+std::string suffix_8 = "56789";
+long long expected_8 = 8642;
+long long result_8 = NumberOfPowerfulInt(start_value_8, end_value_8, digit_limit_8, suffix_8);
+assert(result_8 == expected_8);
+// TEST_END
+  
+// TEST 
+long long start_value_9 = 999999999999999;
+long long end_value_9 = 1000000000000000;
+int digit_limit_9 = 9;
+std::string suffix_9 = "2000000";
+long long expected_9 = 0;
+long long result_9 = NumberOfPowerfulInt(start_value_9, end_value_9, digit_limit_9, suffix_9);
+assert(result_9 == expected_9);
+// TEST_END
+  
+// TEST 
+long long start_value_10 = 0;
+long long end_value_10 = 1000000000000000;
+int digit_limit_10 = 5;
+std::string suffix_10 = "12345";
+try {
+     NumberOfPowerfulInt(start_value_10, end_value_10, digit_limit_10, suffix_10);
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+   assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_11 = 1;
+long long end_value_11 = 1000000000000001;
+int digit_limit_11 = 5;
+std::string suffix_11 = "12345";
+try {
+     NumberOfPowerfulInt(start_value_11, end_value_11, digit_limit_11, suffix_11);
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_12 = 1;
+long long end_value_12 = 1000000000000000;
+int digit_limit_12 = 0;
+std::string suffix_12 = "12345";
+try {
+     NumberOfPowerfulInt(start_value_12, end_value_12, digit_limit_12, suffix_12);
+    
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_13 = 1;
+long long end_value_13 = 1000000000000000;
+int digit_limit_13 = 5;
+std::string suffix_13 = "123456";
+try {
+     NumberOfPowerfulInt(start_value_13, end_value_13, digit_limit_13, suffix_13);
+ 
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_14 = 1;
+long long end_value_14 = 1000000000000000;
+int digit_limit_14 = 5;
+std::string suffix_14 = "1234a";
+try {
+ NumberOfPowerfulInt(start_value_14, end_value_14, digit_limit_14, suffix_14);
+   
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+     assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_15 = 1;
+long long end_value_15 = 1000000000000000;
+int digit_limit_15 = 5;
+std::string suffix_15 = "01234";
+try {
+     NumberOfPowerfulInt(start_value_15, end_value_15, digit_limit_15, suffix_15);
+   
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+   assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_16 = 1000000000000000;
+long long end_value_16 = 1;
+int digit_limit_16 = 5;
+std::string suffix_16 = "12345";
+try {
+    NumberOfPowerfulInt(start_value_16, end_value_16, digit_limit_16, suffix_16);
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_17 = 0;
+long long end_value_17 = 1000000000000000;
+int digit_limit_17 = 0;
+std::string suffix_17 = "12345";
+try {
+    NumberOfPowerfulInt(start_value_17, end_value_17, digit_limit_17, suffix_17);
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+   assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_18 = 1;
+long long end_value_18 = 1000000000000001;
+int digit_limit_18 = 0;
+std::string suffix_18 = "12345";
+try {
+    NumberOfPowerfulInt(start_value_18, end_value_18, digit_limit_18, suffix_18);
+
+    assert(false);
+} catch (const std::invalid_argument& e) {
+     assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_19 = 0;
+long long end_value_19 = 1000000000000000;
+int digit_limit_19 = 5;
+std::string suffix_19 = "123456";
+try {
+ NumberOfPowerfulInt(start_value_19, end_value_19, digit_limit_19, suffix_19);
+
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+     assert(true);
+}
+// TEST_END
+
+// TEST
+long long start_value_20 = 1;
+long long end_value_20 = 1000000000000001;
+int digit_limit_20 = 5;
+std::string suffix_20 = "123456";
+try {
+     NumberOfPowerfulInt(start_value_20, end_value_20, digit_limit_20, suffix_20);
+ 
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_21 = 0;
+long long end_value_21 = 1000000000000000;
+int digit_limit_21 = 5;
+std::string suffix_21 = "1234a";
+try {
+    NumberOfPowerfulInt(start_value_21, end_value_21, digit_limit_21, suffix_21);
+    
+    assert(false);
+} catch (const std::invalid_argument& e) {
+   assert(true);
+}
+// TEST_END
+
+// TEST
+long long start_value_22 = 1;
+long long end_value_22 = 1000000000000001;
+int digit_limit_22 = 5;
+std::string suffix_22 = "1234a";
+try {
+     NumberOfPowerfulInt(start_value_22, end_value_22, digit_limit_22, suffix_22);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+ assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_23 = 0;
+long long end_value_23 = 1000000000000000;
+int digit_limit_23 = 5;
+std::string suffix_23 = "01234";
+try {
+    NumberOfPowerfulInt(start_value_23, end_value_23, digit_limit_23, suffix_23);
+  
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+long long start_value_24 = 1;
+long long end_value_24 = 1000000000000001;
+int digit_limit_24 = 5;
+std::string suffix_24 = "01234";
+try {
+    NumberOfPowerfulInt(start_value_24, end_value_24, digit_limit_24, suffix_24);
+
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_25 = 1000000000000000;
+long long end_value_25 = 1;
+int digit_limit_25 = 5;
+std::string suffix_25 = "12345";
+try {
+     NumberOfPowerfulInt(start_value_25, end_value_25, digit_limit_25, suffix_25);
+  
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+long long start_value_26 = 1000000000000000;
+long long end_value_26 = 1;
+int digit_limit_26 = 0;
+std::string suffix_26 = "12345";
+try {
+     NumberOfPowerfulInt(start_value_26, end_value_26, digit_limit_26, suffix_26);
+    
+    assert(false); 
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+  
+  return 0;
 }
 
 
