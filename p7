@@ -1,0 +1,174 @@
+/*
+Link : https://leetcode.com/problems/construct-string-with-minimum-cost/
+
+Nikhil is given a string target, a vector of strings words, and an integer vector costs, both vectors of the same length.
+
+Imagine an empty string result_string.
+
+Nikhil can perform the following operation any number of times (including zero):
+
+Choose an index i in the range [0, words_length - 1].
+Append words[i] to result_string.
+The cost of operation is costs[i].
+Return the minimum cost to make result_string equal to target. If it's not possible, return -1.
+
+Create a C++ Function ConstructTargetString that will return an integer denoting the minimum cost to construct the target string.
+
+Use appropriate Error Handling using the stdexcept library for invalid test cases.
+
+Input Type:
+
+A string denoting target
+A vector<string> denoting words
+A vector<int> denoting costs
+
+Input Constraints: 
+
+The length of target should be at least 1 and at most 5 * 10^4 inclusive.
+The length of words should be at least 1 and at most 5 * 10^4 inclusive.
+The length of costs should be at least 1 and at most 5 * 10^4 inclusive.
+The length of each words[i] should be at least 1 and at most the length of target inclusive.
+The total sum of lengths of words should be less than or equal to 5 * 10^4.
+Each character in target and words[i] consists only of lowercase English letters.
+Each value in costs should be in the range [1, 10^4] inclusive.
+
+*/
+
+
+#include <vector>
+#include <string>
+#include <climits>
+#include <stdexcept>
+#include <cassert>
+
+class TrieNode {
+public:
+    TrieNode* children[26];
+    int cost;
+
+    TrieNode() {
+        for (int i = 0; i < 26; ++i) {
+            children[i] = nullptr;
+        }
+        cost = INT_MAX;
+    }
+};
+
+class Trie {
+public:
+    TrieNode* root;
+
+    Trie() {
+        root = new TrieNode();
+    }
+
+    void Insert(const std::string& word, int cost) {
+        TrieNode* node = root;
+        for (char character : word) {
+            int index = character - 'a';
+            if (!node->children[index]) {
+                node->children[index] = new TrieNode();
+            }
+            node = node->children[index];
+        }
+        node->cost = std::min(node->cost, cost);
+    }
+
+    int Search(const std::string& prefix) const {
+        TrieNode* node = root;
+        for (char character : prefix) {
+            int index = character - 'a';
+            if (!node->children[index]) {
+                return INT_MAX;
+            }
+            node = node->children[index];
+        }
+        return node->cost;
+    }
+};
+
+
+    int ConstructTargetString(const std::string& target, const std::vector<std::string>& words, const std::vector<int>& costs) {
+      
+        if (target.length() < 1 || target.length() > 50000 || words.size() < 1 || words.size() > 50000 || 
+            costs.size() < 1 || costs.size() > 50000) {
+            throw std::invalid_argument("Invalid input constraints.");
+        }
+      
+       for (char character : target) {
+            if (character < 'a' || character > 'z') {
+                throw std::invalid_argument("Target contains invalid characters.");
+            }
+        }
+
+          size_t total_word_length = 0; 
+        for (const std::string& word : words) {
+          
+            if (word.size() > target.size()) {
+                throw std::invalid_argument("Invalid word length");
+            }
+            
+            for (char character : word) {
+                if (character < 'a' || character > 'z') {
+                    throw std::invalid_argument("Words contain invalid characters.");
+                }
+            }
+           total_word_length += word.size();
+        }
+
+      
+
+        if (total_word_length > 5 * 10000) {
+            throw std::invalid_argument("Total sum of word lengths exceeds limit");
+        }
+      
+        for (int cost : costs) {
+            if (cost < 1 || cost > 10000) {
+                throw std::invalid_argument("Cost out of range");
+            }
+        }
+
+
+        Trie trie;
+        for (size_t i = 0; i < words.size(); ++i) {
+            trie.Insert(words[i], costs[i]);
+        }
+
+        size_t target_length = target.size();
+        std::vector<int> dp_table(target_length + 1, INT_MAX);
+        dp_table[0] = 0;
+
+        for (size_t i = 0; i < target_length; ++i) {
+            if (dp_table[i] == INT_MAX) {
+                continue;
+            }
+            TrieNode* node = trie.root;
+            for (size_t j = i; j < target_length; ++j) {
+                int index = target[j] - 'a';
+                if (!node->children[index]) {
+                    break;
+                }
+                node = node->children[index];
+                if (node->cost != INT_MAX) {
+                    dp_table[j + 1] = std::min(dp_table[j + 1], dp_table[i] + node->cost);
+                }
+            }
+        }
+
+        return dp_table[target_length] == INT_MAX ? -1 : dp_table[target_length];
+    }
+
+#include <vector>
+#include <string>
+#include <climits>
+#include <stdexcept>
+#include <cassert>
+
+
+int main()
+{
+  
+  return 0;
+}
+
+
