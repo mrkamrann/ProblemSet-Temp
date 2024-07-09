@@ -167,8 +167,301 @@ public:
 
 int main()
 {
+
+
+// TEST
+std::string target_1 = "abcabc";
+std::vector<std::string> words_1 = {"abc", "abc"};
+std::vector<int> costs_1 = {1, 1};
+int expected_1 = 2;
+int result_1 = ConstructTargetString(target_1, words_1, costs_1);
+ assert(result_1 == expected_1);
+// TEST_END
+
+// TEST
+std::string target_2 = "abbcdecbba";
+std::vector<std::string> words_2 = {"abbc", "cbba"};
+std::vector<int> costs_2 = {1, 1};
+int expected_2 = -1;
+int result_2 = ConstructTargetString(target_2, words_2, costs_2);
+ assert(result_2 == expected_2);
+// TEST_END
+
+// TEST
+std::string target_3 = "acbcab";
+std::vector<std::string> words_3 = {"ab", "cc"};
+std::vector<int> costs_3 = {1, 1};
+int expected_3 = -1;
+int result_3 = ConstructTargetString(target_3, words_3, costs_3);
+ assert(result_3 == expected_3);
+// TEST_END
+
+// TEST
+std::string target_4 = "ab";
+std::vector<std::string> words_4 = {"ab", "ab"};
+std::vector<int> costs_4 = {1, 2};
+int expected_4 = 1;
+int result_4 = ConstructTargetString(target_4, words_4, costs_4);
+ assert(result_4 == expected_4);
+// TEST_END
+
+// TEST
+std::string target_5 = "aaaa";
+std::vector<std::string> words_5 = {"a", "aa", "aaa"};
+std::vector<int> costs_5 = {1, 2, 3};
+int expected_5 = 4;
+int result_5 = ConstructTargetString(target_5, words_5, costs_5);
+ assert(result_5 == expected_5);
+// TEST_END
+
+// TEST
+std::string target_6 = "abab";
+std::vector<std::string> words_6 = {"ab", "abab"};
+std::vector<int> costs_6 = {1, 1};
+int expected_6 = 1;
+int result_6 = ConstructTargetString(target_6, words_6, costs_6);
+ assert(result_6 == expected_6);
+// TEST_END
+
+// TEST
+std::string target_7 = "abcb";
+std::vector<std::string> words_7 = {"abc", "cb"};
+std::vector<int> costs_7 = {1, 1};
+int expected_7 = -1;
+int result_7 = ConstructTargetString(target_7, words_7, costs_7);
+ assert(result_7 == expected_7);
+// TEST_END
+
+// TEST
+std::string target_8 = "a";
+std::vector<std::string> words_8 = {"a"};
+std::vector<int> costs_8 = {1};
+int expected_8 = 1;
+int result_8 = ConstructTargetString(target_8, words_8, costs_8);
+ assert(result_8 == expected_8);
+// TEST_END
+
+// TEST
+std::string target_9 = "ab";
+std::vector<std::string> words_9 = {"ab"};
+std::vector<int> costs_9 = {1};
+int expected_9 = 1;
+int result_9 = ConstructTargetString(target_9, words_9, costs_9);
+ assert(result_9 == expected_9);
+// TEST_END
+
+// TEST
+std::string target_10 = "";
+std::vector<std::string> words_10 = {"abc"};
+std::vector<int> costs_10 = {1};
+try {
+    ConstructTargetString(target_10, words_10, costs_10);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string target_11 = "abc";
+std::vector<std::string> words_11 = {};
+std::vector<int> costs_11 = {1};
+try {
+    ConstructTargetString(target_11, words_11, costs_11);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string target_12 = "abc";
+std::vector<std::string> words_12 = {"abc"};
+std::vector<int> costs_12 = {};
+try {
+    ConstructTargetString(target_12, words_12, costs_12);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string target_13 = "abc";
+std::vector<std::string> words_13 = {"abc"};
+std::vector<int> costs_13 = {0};
+try {
+    ConstructTargetString(target_13, words_13, costs_13);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string target_14 = "abc";
+std::vector<std::string> words_14 = {"abc"};
+std::vector<int> costs_14 = {-1};
+try {
+    ConstructTargetString(target_14, words_14, costs_14);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST
+std::string target_15 = "abc";
+std::vector<std::string> words_15 = {"a"};
+std::vector<int> costs_15 = {10005};
+try {
+    ConstructTargetString(target_15, words_15, costs_15);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
   
+// TEST 
+std::string target_16 = "12bc";
+std::vector<std::string> words_16 = {"abc", "def", "ghi", "jkl", "mno", "pqr", "stu", "vwx", "yz"};
+std::vector<int> costs_16 = {1};
+try {
+    ConstructTargetString(target_16, words_16, costs_16);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_17 = "abc1";
+std::vector<std::string> words_17 = {"def", "ghi"};
+std::vector<int> costs_17 = {1, 2};
+try {
+    ConstructTargetString(target_17, words_17, costs_17);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_18 = "abc";
+std::vector<std::string> words_18 = {"def", "ghi"};
+std::vector<int> costs_18 = {1, 10005};
+try {
+    ConstructTargetString(target_18, words_18, costs_18);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_19 = "";
+std::vector<std::string> words_19 = {"def", "ghi"};
+std::vector<int> costs_19 = {1, 2};
+try {
+    ConstructTargetString(target_19, words_19, costs_19);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_20 = "abc";
+std::vector<std::string> words_20;
+std::vector<int> costs_20 = {1, 2};
+try {
+    ConstructTargetString(target_20, words_20, costs_20);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_21 = "abc";
+std::vector<std::string> words_21 = {"def", "ghi"};
+std::vector<int> costs_21;
+try {
+    ConstructTargetString(target_21, words_21, costs_21);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+// TEST 
+std::string target_22 = "abc";
+std::vector<std::string> words_22 = {"defgh"};
+std::vector<int> costs_22 = {1};
+try {
+    ConstructTargetString(target_22, words_22, costs_22);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_23 = "abc";
+std::vector<std::string> words_23 = {"def", "ghi"};
+std::vector<int> costs_23 = {1, -1};
+try {
+    ConstructTargetString(target_23, words_23, costs_23);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_24 = "";
+std::vector<std::string> words_24 = {"def", "ghi"};
+std::vector<int> costs_24 = {1, 2};
+try {
+    ConstructTargetString(target_24, words_24, costs_24);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_25 = "abc";
+std::vector<std::string> words_25;
+std::vector<int> costs_25 = {1, 2};
+try {
+    ConstructTargetString(target_25, words_25, costs_25);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
+
+// TEST 
+std::string target_26 = "abc";
+std::vector<std::string> words_26 = {"def", "ghi"};
+std::vector<int> costs_26;
+try {
+    ConstructTargetString(target_26, words_26, costs_26);
+    assert(false);
+} catch (const std::invalid_argument& e) {
+    assert(true);
+}
+// TEST_END
+
   return 0;
 }
-
-
