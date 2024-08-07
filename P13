@@ -1,0 +1,64 @@
+/*
+Link:  https://codeforces.com/contest/1726/problem/E
+*/
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <cassert>
+
+
+long long Power(long long base, long long exponent) {
+    
+    if (exponent == 0) return 1;
+    long long mod_value = 998244353;
+    long long temp = Power(base, exponent / 2);
+    if (exponent & 1) return temp * temp % mod_value * base % mod_value;
+    return temp * temp % mod_value;
+}
+
+long long Solve(long long num) {
+    if (num < 1 || num > 300000) {
+        throw std::invalid_argument("Invalid input: num must be between 1 and 300000");
+    }
+    
+    long long mod_value = 998244353;
+    std::vector<long long> st_arr(num + 1, 1), inv_arr(num + 1, 1), f_arr(num + 1, 1);
+    long long result = 0;
+
+    for (long long i = 1; i <= num; i++) {
+        st_arr[i] = st_arr[i - 1] * i % mod_value;
+        inv_arr[i] = Power(st_arr[i], mod_value - 2);
+    }
+
+    for (long long i = 2; i <= num; i++) {
+        f_arr[i] = (f_arr[i - 1] + (i - 1) * f_arr[i - 2] % mod_value) % mod_value;
+    }
+
+    for (long long i = 0; i <= num / 4; i++) {
+        result = (result + st_arr[num - 2 * i] * inv_arr[num - 4 * i] % mod_value * inv_arr[i] % mod_value * f_arr[num - 4 * i] % mod_value) % mod_value;
+    }
+
+    return result;
+}
+
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <cassert>
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long test_cases;
+    std::cin >> test_cases;
+    while (test_cases--) {
+        long long num;
+        std::cin >> num;
+        std::cout << Solve(num) << '\n';
+    }
+
+    return 0;
+}
