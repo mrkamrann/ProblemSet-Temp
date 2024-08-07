@@ -1,0 +1,60 @@
+/*
+Link: https://codeforces.com/contest/1943/problem/D1
+*/
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <cassert>
+
+void ComputeAndPrintResult(int num, int upper_bound, int modulus) {
+
+    if (num < 3 || num > 400) {
+        throw std::invalid_argument("Invalid input: num must be between 3 and 400");
+    }
+    if (upper_bound < 1 || upper_bound > num) {
+        throw std::invalid_argument("Invalid input: upper_bound must be between 1 and num");
+    }
+    if (modulus <= 100000000 || modulus >= 1000000000) {
+        throw std::invalid_argument("Invalid input: modulus must be between 100000001 and 999999999");
+    }
+
+    std::vector<std::vector<std::vector<int>>> f_arr(num + 3, std::vector<std::vector<int>>(upper_bound + 1, std::vector<int>(upper_bound + 2, 0)));
+    std::vector<std::vector<std::vector<int>>> g_arr(num + 3, std::vector<std::vector<int>>(upper_bound + 1, std::vector<int>(upper_bound + 2, 0)));
+
+    f_arr[0][0][0] = g_arr[0][0][0] = 1;
+
+    for (int i = 1; i <= num + 2; ++i) {
+        for (int j = 0; j <= upper_bound; ++j) {
+            g_arr[i][j][upper_bound + 1] = 0;
+            for (int l = upper_bound; l >= 0; --l) {
+                f_arr[i][j][l] = g_arr[i - 1][l][std::max(0, l - j)];
+                g_arr[i][j][l] = (g_arr[i][j][l + 1] + f_arr[i][j][l]) % modulus;
+            }
+        }
+    }
+
+    std::cout << f_arr[num + 2][0][0] << std::endl;
+}
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <cassert>
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int test_cases;
+    std::cin >> test_cases;
+    while (test_cases--) {
+        int num, upper_bound, modulus;
+        std::cin >> num >> upper_bound >> modulus;
+        ComputeAndPrintResult(num, upper_bound, modulus);
+    }
+
+    return 0;
+}
+
+
